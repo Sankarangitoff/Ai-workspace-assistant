@@ -1,0 +1,82 @@
+[
+  {
+    "id": "099b7dae-6b42-4b40-ab03-9268a5d7ca50",
+    "user_id": "4",
+    "title": "Launch a marketing campaign for a new product",
+    "description": "",
+    "status": "todo",
+    "due_date": "2025-05-31",
+    "priority": "medium",
+    "created_at": "2025-05-18T22:12:15.173171",
+    "updated_at": "2025-05-19T10:24:32.806668",
+    "order": 0,
+    "subtasks": [
+      {
+        "id": "f875e9af-5cde-403c-80a0-4c180657ccd0",
+        "text": "Define target audience and buyer personas",
+        "status": "done",
+        "due_date": null
+      },
+      {
+        "id": "40581f1f-feb6-4a21-84ac-5e0010240687",
+        "text": "Set campaign goals (e.g., brand awareness, leads, sales)",
+        "status": "in_progress",
+        "due_date": null
+      },
+      {
+        "id": "9ec0f744-06c4-4d31-862a-1e49a7f9ddc0",
+        "text": "Determine campaign budget and allocate resources",
+        "status": "todo",
+        "due_date": null
+      },
+      {
+        "id": "eb1cbe07-6ed3-44fe-976a-3b963faf5c99",
+        "text": "Develop a marketing message and key selling points",
+        "status": "todo",
+        "due_date": null
+      },
+      {
+        "id": "c27d5caf-1cb8-4328-96f4-9a96f9c0d1e1",
+        "text": "Choose marketing channels (e.g., social media, email, paid advertising)",
+        "status": "todo",
+        "due_date": null
+      },
+      {
+        "id": "4dd8a13e-c3d4-4f19-a5e6-d5d707a0de10",
+        "text": "Create marketing materials (e.g., website landing page, ads, social media posts, email templates)",
+        "status": "todo",
+        "due_date": null
+      },
+      {
+        "id": "e8e39cbf-0bb9-4b73-8c54-2b35fc6c404a",
+        "text": "Develop a campaign timeline and schedule",
+        "status": "todo",
+        "due_date": null
+      },
+      {
+        "id": "8c72657c-4247-4008-8f1f-780eed5796dc",
+        "text": "Implement chosen marketing channels and launch materials",
+        "status": "todo",
+        "due_date": null
+      },
+      {
+        "id": "1b8779c1-7b64-4ef7-a534-a059a3a50e68",
+        "text": "Monitor campaign performance using relevant KPIs",
+        "status": "todo",
+        "due_date": null
+      },
+      {
+        "id": "974146db-3f4f-4212-955e-b20b4051943e",
+        "text": "Analyze results and make necessary adjustments",
+        "status": "todo",
+        "due_date": null
+      },
+      {
+        "id": "35be1f1c-af37-40ce-bdea-463ab1ff0b06",
+        "text": "Report on campaign performance and ROI",
+        "status": "todo",
+        "due_date": null
+      }
+    ]
+  }
+]

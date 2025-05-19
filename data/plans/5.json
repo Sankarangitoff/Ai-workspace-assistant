@@ -1,0 +1,76 @@
+[
+  {
+    "id": "4306b8be-519e-4180-90ea-6b7293a83ce1",
+    "user_id": "5",
+    "title": "Launch a marketing campaign for a new product",
+    "description": "Marketing campaign",
+    "status": "todo",
+    "due_date": "2025-05-31",
+    "priority": "medium",
+    "created_at": "2025-05-19T10:39:44.429933",
+    "updated_at": "2025-05-19T10:40:14.773043",
+    "order": 0,
+    "subtasks": [
+      {
+        "id": "02479af5-8812-4d0b-afd2-76ebb75fe003",
+        "text": "Define target audience and marketing objectives",
+        "status": "todo",
+        "due_date": "2025-05-21"
+      },
+      {
+        "id": "49e73c93-29e9-473e-bb94-72ff6e8474eb",
+        "text": "Develop marketing campaign messaging and key selling points",
+        "status": "todo",
+        "due_date": "2025-05-21"
+      },
+      {
+        "id": "00a1fb57-1bce-4f59-9cf7-d883e9a9c9cf",
+        "text": "Select appropriate marketing channels (e.g., social media, email, paid advertising)",
+        "status": "todo",
+        "due_date": null
+      },
+      {
+        "id": "afff17dc-4239-446e-9e54-7b7984c34fa2",
+        "text": "Create marketing materials (e.g., website landing page, social media posts, email templates, ads)",
+        "status": "todo",
+        "due_date": null
+      },
+      {
+        "id": "3d609e78-ca60-4463-bc61-97a6e9fe25c2",
+        "text": "Develop a campaign budget and timeline",
+        "status": "todo",
+        "due_date": null
+      },
+      {
+        "id": "afb43f29-4e90-48b3-a829-1010e7a7ba42",
+        "text": "Set up tracking and analytics to measure campaign performance",
+        "status": "todo",
+        "due_date": null
+      },
+      {
+        "id": "abd52a71-b49b-418e-8f97-fa71239559ba",
+        "text": "Launch marketing campaign across chosen channels",
+        "status": "todo",
+        "due_date": null
+      },
+      {
+        "id": "7614fb02-f047-4007-abb9-39d05505ae0f",
+        "text": "Monitor campaign performance and make adjustments as needed",
+        "status": "todo",
+        "due_date": null
+      },
+      {
+        "id": "a52a4ff1-4555-467e-a351-4dc3c30eacdb",
+        "text": "Analyze campaign results and prepare a post-campaign report",
+        "status": "todo",
+        "due_date": null
+      },
+      {
+        "id": "bf988780-84cc-4221-a350-109197981c3e",
+        "text": "Gather and incorporate customer feedback",
+        "status": "todo",
+        "due_date": null
+      }
+    ]
+  }
+]

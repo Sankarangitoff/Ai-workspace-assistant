@@ -1,0 +1,34 @@
+{
+  "timestamp": "2025-05-13T22:04:22.602224",
+  "file_id": "Techjays Dev-All seasons (3)",
+  "context": [
+    {
+      "question": "How many users have joined leagues",
+      "response": [
+        "One user, Kait Hurley, has joined leagues.  She joined 6 leagues"
+      ]
+    },
+    {
+      "question": "How many users have subscription",
+      "response": [
+        "12 users have a subscription"
+      ]
+    },
+    {
+      "question": "How many users have subscribed",
+      "response": [
+        "11 users have subscribed"
+      ]
+    },
+    {
+      "question": "How many users have subscribed",
+      "response": [
+        "11 users have subscribed"
+      ]
+    }
+  ],
+  "metadata": {
+    "last_interaction": "2025-05-13T22:04:22.602235",
+    "question_count": 22
+  }
+}

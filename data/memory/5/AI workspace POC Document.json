@@ -1,0 +1,22 @@
+{
+  "timestamp": "2025-05-19T10:37:11.104638",
+  "file_id": "AI workspace POC Document",
+  "context": [
+    {
+      "question": "Hi",
+      "response": [
+        "Hi!  How can I help you today?"
+      ]
+    },
+    {
+      "question": "What is the context of this Ai Workspace document file ?",
+      "response": [
+        "The AI Workspace Assistant document describes a project to build a powerful, LLM-driven assistant.  This assistant will allow users to upload and query internal documents using natural language, extract summaries and action items, plan tasks from high-level goals, and retain memory of past interactions.  The technology leveraged includes Multi-Component Pipelines (MCP), Retrieval Augmented Generation (RAG), Agents, and Vector Memory."
+      ]
+    }
+  ],
+  "metadata": {
+    "last_interaction": "2025-05-19T10:37:11.104648",
+    "question_count": 2
+  }
+}

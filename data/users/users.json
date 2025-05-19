@@ -1,0 +1,37 @@
+[
+  {
+    "user_id": 1,
+    "name": "Sankaran",
+    "username": "sankaran_1",
+    "email": "sankaran@example.com",
+    "password": "password123"
+  },
+  {
+    "user_id": 2,
+    "name": "Sankaran2",
+    "username": "sankaran_2",
+    "email": "sankaran2@example.com",
+    "password": "$2b$12$4bX.ApQYAlcQdONar5RCQecktrZWKUkLhEI/GcT3Y9RN53WnMpDMe"
+  },
+  {
+    "user_id": 3,
+    "name": "Test User",
+    "username": "testuser",
+    "email": "test@example.com",
+    "password": "$2b$12$7tLuiuz/brrFWIuRcLB1U.A7IQ/SRHzQdzqeyKgeVvumTv9l6fUk2"
+  },
+  {
+    "user_id": 4,
+    "name": "Test1 User",
+    "username": "testuser1",
+    "email": "test1@example.com",
+    "password": "$2b$12$zgGZnAD.rMaqok7WNR/jXe7MTq/a24Qd3rJNQeZza1/TBL7FtvrZe"
+  },
+  {
+    "user_id": 5,
+    "name": "Sankaran_R",
+    "username": "sankaran",
+    "email": "sankaran1@example.com",
+    "password": "$2b$12$tXhchVPNu5536hQfD/Ix8eUjKzCkaJf2g6kO6rUFPfQF3ecrcso6e"
+  }
+]

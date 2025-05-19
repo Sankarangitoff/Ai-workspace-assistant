@@ -1,0 +1,16 @@
+{
+  "timestamp": "2025-05-18T07:45:53.036973",
+  "file_id": "Incentive letter_100204",
+  "context": [
+    {
+      "question": "how much is the incentive amount",
+      "response": [
+        "The incentive amount is Rs. 4596."
+      ]
+    }
+  ],
+  "metadata": {
+    "last_interaction": "2025-05-18T07:45:53.036995",
+    "question_count": 1
+  }
+}
