@@ -2,10 +2,38 @@ let tasks = [];
 let selectedPlanId = null;
 const API_BASE = 'http://127.0.0.1:8000/api/plans';
 const userToken = localStorage.getItem('token');
+let newSubtasksDraft = [];
+
+function generateId() {
+    try {
+        if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    } catch (_) {}
+    return 'st_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+function renderNewSubtasksDraft() {
+    const list = document.getElementById('new-subtasks-list');
+    if (!list) return;
+    list.innerHTML = '';
+    newSubtasksDraft.forEach(st => {
+        const li = document.createElement('li');
+        li.textContent = st.text;
+        const del = document.createElement('button');
+        del.className = 'subtask-delete-btn';
+        del.title = 'Remove';
+        del.innerHTML = '✕';
+        del.onclick = () => {
+            newSubtasksDraft = newSubtasksDraft.filter(s => s.id !== st.id);
+            renderNewSubtasksDraft();
+        };
+        li.appendChild(del);
+        list.appendChild(li);
+    });
+}
 
 async function fetchTasks() {
     try {
-        debugger;
+        // debugger;
         const res = await fetch(API_BASE, {
             headers: { 'Authorization': `Bearer ${userToken}` }
         });
@@ -30,6 +58,63 @@ async function fetchTasks() {
         selectedPlanId = null;
         renderPlansSidebar();
         renderSelectedPlanSubtasks();
+    }
+}
+
+async function addSubtask(planId, text) {
+    const plan = tasks.find(p => p.id === planId);
+    if (!plan) return;
+    const newSub = { id: generateId(), text, status: 'todo', due_date: '' };
+    plan.subtasks = Array.isArray(plan.subtasks) ? [...plan.subtasks, newSub] : [newSub];
+    renderSelectedPlanSubtasks();
+    try {
+        const res = await fetch(`${API_BASE}/${planId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userToken}`
+            },
+            body: JSON.stringify({ subtasks: plan.subtasks })
+        });
+        const data = await res.json();
+        if (data.status_code !== 200) {
+            showToast(data.message || 'Failed to add subtask', true);
+            await fetchTasks();
+        } else {
+            await fetchTasks();
+        }
+    } catch (e) {
+        showToast('Failed to add subtask', true);
+        await fetchTasks();
+    }
+}
+
+async function deleteSubtask(planId, subtaskId) {
+    const plan = tasks.find(p => p.id === planId);
+    if (!plan) return;
+    const original = plan.subtasks ? [...plan.subtasks] : [];
+    plan.subtasks = (plan.subtasks || []).filter(st => st.id !== subtaskId);
+    renderSelectedPlanSubtasks();
+    try {
+        const res = await fetch(`${API_BASE}/${planId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userToken}`
+            },
+            body: JSON.stringify({ subtasks: plan.subtasks })
+        });
+        const data = await res.json();
+        if (data.status_code !== 200) {
+            showToast(data.message || 'Failed to delete subtask', true);
+            plan.subtasks = original;
+            await fetchTasks();
+        } else {
+            await fetchTasks();
+        }
+    } catch (e) {
+        showToast('Failed to delete subtask', true);
+        await fetchTasks();
     }
 }
 
@@ -166,9 +251,17 @@ function renderSelectedPlanSubtasks() {
             dueDateContainer.appendChild(dueDateLabel);
             dueDateContainer.appendChild(dueDateInput);
 
+            // Delete subtask button
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'subtask-delete-btn';
+            deleteBtn.title = 'Delete subtask';
+            deleteBtn.innerHTML = '🗑';
+            deleteBtn.onclick = () => deleteSubtask(plan.id, subtask.id);
+
             li.appendChild(statusBadge);
             li.appendChild(textSpan);
             li.appendChild(dueDateContainer);
+            li.appendChild(deleteBtn);
             ul.appendChild(li);
         });
         subtasksContainer.appendChild(ul);
@@ -178,6 +271,31 @@ function renderSelectedPlanSubtasks() {
         noSubtasksMessage.textContent = 'No subtasks for this plan yet.';
         subtasksContainer.appendChild(noSubtasksMessage);
     }
+    // Add new subtask row
+    const addRow = document.createElement('div');
+    addRow.className = 'subtask-add-row';
+    addRow.innerHTML = `
+        <input type="text" class="plan-new-subtask-input" placeholder="Add a subtask...">
+        <button class="btn secondary-btn">Add</button>
+    `;
+    const addInput = addRow.querySelector('input');
+    const addBtn = addRow.querySelector('button');
+    addBtn.onclick = () => {
+        const t = addInput.value.trim();
+        if (!t) return;
+        addSubtask(plan.id, t);
+        addInput.value = '';
+    };
+    addInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const t = addInput.value.trim();
+            if (!t) return;
+            addSubtask(plan.id, t);
+            addInput.value = '';
+        }
+    });
+    subtasksContainer.appendChild(addRow);
     mainList.appendChild(subtasksContainer);
 }
 
@@ -442,15 +560,24 @@ if (addTaskBtn && addTaskModal && addTaskClose) {
     addTaskBtn.onclick = () => {
         addTaskModal.style.display = 'block';
         setTimeout(() => addTaskModal.classList.add('show'), 10);
+        // reset modal subtasks
+        newSubtasksDraft = [];
+        renderNewSubtasksDraft();
+        const input = document.getElementById('new-subtask-text');
+        if (input) input.value = '';
     };
     addTaskClose.onclick = () => {
         addTaskModal.classList.remove('show');
         setTimeout(() => addTaskModal.style.display = 'none', 300);
+        newSubtasksDraft = [];
+        renderNewSubtasksDraft();
     };
     window.addEventListener('click', (e) => {
         if (e.target === addTaskModal) {
             addTaskModal.classList.remove('show');
             setTimeout(() => addTaskModal.style.display = 'none', 300);
+            newSubtasksDraft = [];
+            renderNewSubtasksDraft();
         }
     });
 }
@@ -738,6 +865,24 @@ if (logoutBtn) {
 // Add Task Modal submit
 const addTaskForm = document.getElementById('add-task-form');
 if (addTaskForm) {
+    // wire add-subtask controls inside modal
+    const addNewSubtaskBtn = document.getElementById('add-new-subtask-btn');
+    const newSubtaskInput = document.getElementById('new-subtask-text');
+    function addDraftSubtaskFromInput() {
+        const text = newSubtaskInput ? newSubtaskInput.value.trim() : '';
+        if (!text) return;
+        newSubtasksDraft.push({ id: generateId(), text, status: 'todo', due_date: '' });
+        if (newSubtaskInput) newSubtaskInput.value = '';
+        renderNewSubtasksDraft();
+    }
+    if (addNewSubtaskBtn) addNewSubtaskBtn.onclick = addDraftSubtaskFromInput;
+    if (newSubtaskInput) newSubtaskInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addDraftSubtaskFromInput();
+        }
+    });
+
     addTaskForm.onsubmit = async function(e) {
         e.preventDefault();
         const title = document.getElementById('task-title').value.trim();
@@ -755,7 +900,7 @@ if (addTaskForm) {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${userToken}`
                 },
-                body: JSON.stringify({ title, description, due_date, priority })
+                body: JSON.stringify({ title, description, due_date, priority, subtasks: newSubtasksDraft })
             });
             const data = await res.json();
             if (data.status_code === 200) {
@@ -765,6 +910,8 @@ if (addTaskForm) {
                 selectedPlanId = data.data.id;
                 await fetchTasks(); // This will update sidebar and main content
                 addTaskForm.reset();
+                newSubtasksDraft = [];
+                renderNewSubtasksDraft();
             } else {
                 showError('add-task-error', data.message || 'Error adding plan');
             }

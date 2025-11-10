@@ -12,7 +12,7 @@ from fastapi.staticfiles import StaticFiles
 
 # Configure Gemini
 genai.configure(api_key=GEMINI_API_KEY)
-gemini_model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
+gemini_model = genai.GenerativeModel("gemini-1.5-flash")
 
 # FastAPI app
 app = FastAPI()

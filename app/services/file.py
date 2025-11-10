@@ -7,10 +7,6 @@ from langchain_community.vectorstores import Chroma
 from app.config import CHROMA_PATH
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
-# Embedding model setup
-embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-vectorstore = Chroma(persist_directory=CHROMA_PATH, embedding_function=embedding_model)
-
 LOADER_MAPPING = {
     "pdf": PyPDFLoader,
     "csv": CSVLoader,
@@ -19,7 +15,7 @@ LOADER_MAPPING = {
     "xlsx": UnstructuredExcelLoader
 }
 
-def load_and_embed(file_path: str):
+def load_and_embed(file_path: str, user_id: str, file_id: str):
     ext = file_path.split(".")[-1].lower()
     loader_class = LOADER_MAPPING.get(ext)
     if not loader_class:
@@ -30,6 +26,14 @@ def load_and_embed(file_path: str):
     docs = loader.load()
     splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
     chunks = splitter.split_documents(docs)
+
+    # Tag chunks with ownership metadata to enable per-user and per-file filtering
+    for doc in chunks:
+        doc.metadata = doc.metadata or {}
+        doc.metadata["user_id"] = str(user_id)
+        doc.metadata["file_id"] = str(file_id)
+        doc.metadata.setdefault("source", file_path)
+
     vectorstore.add_documents(chunks)
     return len(chunks)
 

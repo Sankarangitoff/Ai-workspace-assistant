@@ -119,6 +119,9 @@ pip install fastapi uvicorn langchain openai chromadb python-dotenv \
             python-docx unstructured python-doc python-multipart \
             pandas tabulate openpyxl passlib[bcrypt] \
             fastapi[all] python-jose[cryptography]
+
+### Upgrade the Google SDKs (to avoid v1beta issues)  --- Optional 
+pip install -U google-generativeai google-ai-generativelanguage google-auth
 ```
 
 ### Step 4: Run the Server
