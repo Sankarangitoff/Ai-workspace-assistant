@@ -19,9 +19,9 @@ async def upload_file(file: UploadFile = File(...), user_id: str = Depends(get_c
         with open(file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
         
-        chunk_count = load_and_embed(file_path)
+        file_id = os.path.splitext(file.filename)[0]
+        chunk_count = load_and_embed(file_path, user_id, file_id)
         if chunk_count:
-            file_id = os.path.splitext(file.filename)[0]
             return {
                 "status": "success", 
                 "chunks": chunk_count, 

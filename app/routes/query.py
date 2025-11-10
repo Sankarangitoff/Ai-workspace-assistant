@@ -52,7 +52,21 @@ async def query_knowledge_base(query: QueryRequest, user_id: str = Depends(get_c
             If the user asks about the file, like what is the file about, what is the data about, what is the file name, just say "The file : {filename} is about: {data_note}" or just tell the main context about the file in a single line."
             """
             
-            response = gemini_model.generate_content(prompt)
+            # Call Gemini with graceful rate-limit handling
+            try:
+                response = gemini_model.generate_content(prompt)
+            except Exception as ge:
+                ge_str = str(ge).lower()
+                if "quota" in ge_str or "rate" in ge_str or "429" in ge_str:
+                    return JSONResponse(
+                        status_code=429,
+                        content={
+                            "status_code": 429,
+                            "data": None,
+                            "message": "Rate limit reached on Gemini free tier. Please retry shortly."
+                        }
+                    )
+                raise
             lines = [line.strip(" .") for line in response.text.strip().split("\n") if line.strip()]
             
             # Update memory
@@ -70,7 +84,16 @@ async def query_knowledge_base(query: QueryRequest, user_id: str = Depends(get_c
             
         # For non-CSV files
         from app.services.file import vectorstore
-        results = vectorstore.similarity_search(query.question, k=3)
+        results = vectorstore.similarity_search(
+            query.question,
+            k=3,
+            filter={
+                "$and": [
+                    {"user_id": str(user_id)},
+                    {"file_id": str(query.file_id)}
+                ]
+            }
+        )
         context = "\n\n".join([doc.page_content for doc in results])
         
         prompt = f"""
@@ -89,7 +112,29 @@ async def query_knowledge_base(query: QueryRequest, user_id: str = Depends(get_c
         Question: {query.question}
         """
         
-        response = gemini_model.generate_content(prompt)
+        # Call Gemini with graceful rate-limit handling
+        try:
+            response = gemini_model.generate_content(prompt)
+        except Exception as ge:
+            ge_str = str(ge).lower()
+            if "quota" in ge_str or "rate" in ge_str or "429" in ge_str:
+                # Provide a retrieval-only fallback response so users still get value when rate-limited
+                fallback = " Here are the most relevant excerpts I found:\n\n" + context[:1200]
+                lines = [line.strip() for line in fallback.split('\n') if line.strip()]
+
+                # Update memory with the fallback
+                memory_data = update_memory_data(file_memory, query, lines)
+                save_memory(user_id, query.file_id, memory_data)
+
+                return {
+                    "status_code": 200,
+                    "data": {
+                        "response": lines,
+                        "memory_updated": True
+                    },
+                    "message": "partial_fallback_due_to_rate_limit"
+                }
+            raise
         lines = [line.strip() for line in response.text.strip().split('\n') if line.strip()]
         
         # Update memory

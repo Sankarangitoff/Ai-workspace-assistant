@@ -583,6 +583,34 @@ async function fetchMemory(fileId) {
     }
 }
 
+// Convert plain text or lines into readable HTML with bullets and preserved breaks
+function formatResponseHtml(response) {
+    const raw = Array.isArray(response) ? response.join('\n') : String(response ?? '');
+    const normalized = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    const lines = normalized.split('\n');
+    const bulletRegex = /^\s*(?:[\u2022\u2023\u25E6\u25CF\u25CB\u25A0\-*]|[0-9]+[.)])\s+(.*)$/; // bullets and 1./1)
+    let html = '';
+    let inList = false;
+    for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) {
+            if (inList) { html += '</ul>'; inList = false; }
+            html += '<br>';
+            continue;
+        }
+        const match = trimmed.match(bulletRegex);
+        if (match) {
+            if (!inList) { html += '<ul class="ai-bullets">'; inList = true; }
+            html += `<li>${escapeHtml(match[1].trim())}</li>`;
+        } else {
+            if (inList) { html += '</ul>'; inList = false; }
+            html += `<p>${escapeHtml(trimmed)}</p>`;
+        }
+    }
+    if (inList) html += '</ul>';
+    return html || '<p></p>';
+}
+
 // Update the function that handles selecting a file
 function selectFile(fileId, fileName, fileItemElement) {
     console.log('Selecting file:', fileId, fileName);
@@ -644,13 +672,9 @@ function selectFile(fileId, fileName, fileItemElement) {
                         // Assistant response
                         const assistantMessage = document.createElement('div');
                         assistantMessage.className = 'message assistant fade-in';
-                        const responseText = Array.isArray(qa.response)
-                            ? qa.response.join('<br>')
-                            : qa.response;
+                        const responseHtml = formatResponseHtml(qa.response);
                         assistantMessage.innerHTML = `
-                            <div class="message-content">
-                                <p>${responseText}</p>
-                            </div>
+                            <div class="message-content">${responseHtml}</div>
                             <div class="message-feedback">
                                 <button class="feedback-btn thumbs-up" aria-label="Helpful">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
@@ -676,13 +700,9 @@ function selectFile(fileId, fileName, fileItemElement) {
                 `;
                 const assistantMessage = document.createElement('div');
                 assistantMessage.className = 'message assistant fade-in';
-                const responseText = Array.isArray(memory.context.response)
-                    ? memory.context.response.join('<br>')
-                    : memory.context.response;
+                const responseHtml = formatResponseHtml(memory.context.response);
                 assistantMessage.innerHTML = `
-                    <div class="message-content">
-                        <p>${responseText}</p>
-                    </div>
+                    <div class="message-content">${responseHtml}</div>
                     <div class="message-feedback">
                         <button class="feedback-btn thumbs-up" aria-label="Helpful">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
@@ -964,7 +984,7 @@ async function sendQuery() {
             <p class="animate-pulse-subtle">Thinking...</p>
         </div>
     `;
-    debugger
+    //debugger
     chatMessages.appendChild(loadingMessage);
     
     // Scroll to bottom
@@ -998,15 +1018,13 @@ async function sendQuery() {
         
         // Replace loading message with response
         const responseText = data.data?.response || data.answer || "No answer was provided by the system.";
-        const formattedResponse = Array.isArray(responseText) ? responseText.join('<br>') : responseText;
+        const responseHtml = formatResponseHtml(responseText);
         
         // Create assistant message
         const assistantMessage = document.createElement('div');
         assistantMessage.className = 'message assistant fade-in';
         assistantMessage.innerHTML = `
-            <div class="message-content">
-                <p>${formattedResponse}</p>
-            </div>
+            <div class="message-content">${responseHtml}</div>
             <div class="message-feedback">
                 <button class="feedback-btn thumbs-up" aria-label="Helpful">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
