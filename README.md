@@ -59,91 +59,100 @@ A modern, AI-powered productivity web application that brings together intellige
 
 ---
 
-## Project Structure
-
-- `app/`: Contains the main application code
-- `data/`: Data storage directory
-- `db/`: Database related files
-- `main.py`: Main entry point of the application
-
-## Setup
-
-1. Create a virtual environment:
-```bash
-python -m venv venv
-```
-
-2. Activate the virtual environment:
-- Windows:
-```bash
-.\venv\Scripts\activate
-```
-- Unix/MacOS:
-```bash
-source venv/bin/activate
-```
-
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-## Usage
-
-Run the main application:
-```bash
-python main.py
-
 ## 🛠️ Getting Started
 
-### Step 1: Clone the Repository
+**Prerequisites:** Python 3.9+ and a Google Gemini API key
+([get one free here](https://aistudio.google.com/app/apikey)).
+
+### 1. Clone the repository
 
 ```bash
 git clone <repo-url>
-cd Ai_workspace_assistant
+cd Ai-workspace-assistant
 ```
 
-### Step 2: Setup Virtual Environment
+### 2. Create and activate a virtual environment
 
 ```bash
-python -m venv venv
-./venv/Scripts/Activate.ps1  # Windows PowerShell
+python3 -m venv venv
+
+# macOS / Linux
+source venv/bin/activate
+
+# Windows (PowerShell)
+.\venv\Scripts\Activate.ps1
 ```
 
-### Step 3: Install Dependencies
+### 3. Install dependencies
 
 ```bash
 pip install --upgrade pip
-pip install fastapi uvicorn langchain openai chromadb python-dotenv \
-            google-generativeai sentence-transformers pypdf \
-            python-docx unstructured python-doc python-multipart \
-            pandas tabulate openpyxl passlib[bcrypt] \
-            fastapi[all] python-jose[cryptography]
-
-### Upgrade the Google SDKs (to avoid v1beta issues)  --- Optional 
-pip install -U google-generativeai google-ai-generativelanguage google-auth
+pip install -r requirements.txt
 ```
 
-### Step 4: Run the Server
+> First install is large (~1–2 GB) because it pulls in PyTorch and the
+> `sentence-transformers` embedding model. Give it a few minutes.
+
+### 4. Configure environment variables
+
+Copy the example file and add your own keys:
 
 ```bash
-uvicorn main:app --reload
+cp env.example .env
 ```
-Add gemini key in .env file
+
+Then edit `.env` and set:
+
+- `GEMINI_API_KEY` – your Google Gemini API key (required)
+- `SECRET_KEY` – any long random string for signing auth tokens
+
+### 5. Run the server
+
+```bash
+python main.py
+```
+
+This starts the app at **http://127.0.0.1:8000**.
+(Equivalent: `uvicorn main:app --reload` for auto-reload during development.)
+
+### 6. Check that it works
+
+- Open **http://127.0.0.1:8000** in your browser — you'll see the login /
+  registration page. Register a user, then upload a document and ask
+  questions, or try the task planner.
+- Open **http://127.0.0.1:8000/docs** for the interactive FastAPI (Swagger)
+  API documentation.
+
+The first document query downloads the embedding model and may take a few
+seconds; subsequent queries are fast.
+
 ---
 
-## 📁 File Structure
+## 📁 Project Structure
 
-* `main.py` – Main FastAPI app
-* `app/` – Frontend static files (HTML, CSS, JS)
+```
+.
+├── main.py            # Entry point — starts the FastAPI server
+├── requirements.txt   # Python dependencies
+├── env.example        # Template for the .env file
+├── app/
+│   ├── main.py        # FastAPI app: CORS, routers, static file mounting
+│   ├── config.py      # Env vars, Gemini + ChromaDB + embeddings setup
+│   ├── routes/        # API endpoints (auth, file, query, memory, feedback, plan)
+│   ├── services/      # Business logic
+│   ├── models/        # Pydantic models
+│   ├── assets/        # Images and logos
+│   ├── index.html     # Login & registration UI
+│   ├── dashboard.html # Chat & file management UI
+│   ├── planner.html   # Task planner UI
+│   └── *.css, *.js    # Frontend styles and logic
+├── data/              # Runtime storage for uploads, memory, plans (git-ignored)
+└── db/                # ChromaDB vector store (git-ignored)
+```
 
-  * `index.html` – Login & registration
-  * `dashboard.html` – Chat & file management
-  * `planner.html` – Task planner UI
-* `assets/` – Images and logos
-* `styles.css`, `custom.css`, etc. – Stylesheets
-* `planner.js`, `app.js` – JS logic
-
+> **Note:** `data/` and `db/` hold user uploads and the vector index. They are
+> generated at runtime and intentionally excluded from git, so a fresh clone
+> starts empty.
 
 ---
 

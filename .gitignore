@@ -15,6 +15,13 @@ ENV/
 *.db
 *.sqlite3
 
+# User data & vector store (runtime-generated; do not commit)
+# Keep the empty directories (.gitkeep) but ignore their contents.
+data/*
+!data/.gitkeep
+db/*
+!db/.gitkeep
+
 # Environment variables
 .env
 
